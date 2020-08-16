@@ -15,7 +15,18 @@ module.exports = () =>{
     // 세션에 저장한 아이디를 통해 사용자 정보 객체를 불러오는 것
     // 세션에 불필요한 데이터를 담아두지 않기 위한 과정
     passport.deserializeUser((id, done) =>{
-        User.findOne({where: {id}})
+        User.findOne({
+            where: {id},
+            include: [{
+                model: User,
+                attributes: ['id', 'nick'],
+                as: 'Followers',
+            }, {
+                model: User,
+                attributes: ['id', 'nick'],
+                as: 'Followings',
+            }],
+        })
             .then(user => done(null, user))
             .catch(err => done(err));
     });
